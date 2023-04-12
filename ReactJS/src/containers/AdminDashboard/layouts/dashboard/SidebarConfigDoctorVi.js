@@ -21,6 +21,11 @@ const SidebarConfigDoctorVi = [
     path: "/admin-dashboard/manage-drug",
     icon: getIcon("mdi:drugs"),
   },
+  {
+    title: 'Quản lý lịch sử',
+    path: '/admin-dashboard/doctor/history',
+    icon: getIcon('mdi:drugs'),
+  },
 
 ];
 

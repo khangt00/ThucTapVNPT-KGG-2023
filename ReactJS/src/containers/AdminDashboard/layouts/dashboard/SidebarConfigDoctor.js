@@ -16,6 +16,11 @@ const sidebarConfigDoctor = [
     path: "/admin-dashboard/doctor/manage-schedule-doctor",
     icon: getIcon("healthicons:i-schedule-school-date-time"),
   },
+  {
+    title: "Manage Doctor's history",
+    path: '/admin-dashboard/doctor/history',
+    icon: getIcon('healthicons:i-schedule-school-date-time'),
+  },
 ];
 
 export default sidebarConfigDoctor;
