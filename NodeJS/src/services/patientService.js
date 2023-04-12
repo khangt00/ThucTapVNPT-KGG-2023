@@ -36,34 +36,34 @@ let postBookAppointment = (data) => {
                 raw: false, //chu y cho nay do ben file config cau hinh cho query
               });
       
-              if(schedule){
-                  if(schedule.currentNumber<schedule.maxNumber){
-                    schedule.currentNumber = parseInt(schedule.currentNumber) + 1;
-                    await schedule.save();
-                  }else{
-                    resolve({
-                      errCode: 3,
-                      errMessage: "Limit max number booking!",
-                    });
-                  }
-              }else{
-                  resolve({
-                    errCode: 3,
-                    errMessage: "Limit max number booking!",
-                  });
-              }
+              // if(schedule){
+              //     if(schedule.currentNumber<schedule.maxNumber){
+              //       schedule.currentNumber = parseInt(schedule.currentNumber) + 1;
+              //       await schedule.save();
+              //     }else{
+              //       resolve({
+              //         errCode: 3,
+              //         errMessage: "Limit max number booking!",
+              //       });
+              //     }
+              // }else{
+              //     resolve({
+              //       errCode: 3,
+              //       errMessage: "Limit max number booking!",
+              //     });
+              // }
               
 
 
         let token = uuidv4(); // ⇨ '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
-        await emailService.sendSimpleEmail({
-          receiverEmail: data.email,
-          patientName: data.patientName,
-          time: data.timeString,
-          doctorName: data.doctorName,
-          language: data.language,
-          redirectLink: buildUrlEmail(data.doctorId, token),
-        });
+        // await emailService.sendSimpleEmail({
+        //   receiverEmail: data.email,
+        //   patientName: data.patientName,
+        //   time: data.timeString,
+        //   doctorName: data.doctorName,
+        //   language: data.language,
+        //   redirectLink: buildUrlEmail(data.doctorId, token),
+        // });
 
         //upsert patient
         // let user = await db.User.findOrCreate({
@@ -113,7 +113,13 @@ let postBookAppointment = (data) => {
         //       token: token,
         //     },
         //   });
-        // }
+        // }        // đặt lịch luôn
+        await postVerifyBookAppointment({
+          doctorId: data.doctorId,
+          token: token
+        })
+
+        // await bookedAppointment();
         resolve({
           errCode: 0,
           errMessage: "Save infor patient succeed!",
@@ -128,6 +134,7 @@ let postBookAppointment = (data) => {
 let postVerifyBookAppointment = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
+      console.log("data:", data)
       if (!data.token || !data.doctorId) {
         resolve({
           errCode: 1,
@@ -260,8 +267,45 @@ let filterHistory = (data) => {
   });
 };
 
+const bookedAppointment = async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+        let bookedAppoints=[]
+          bookedAppoints = await db.Booking.findAll({
+              where: {
+                    patientId: 93,
+                    statusId: 'S2',
+                },
+            })
+
+            console.log('bookedAppoints: ', bookedAppoints)
+
+            let doctorInfo ={}
+            if(bookedAppoints.doctorId){
+              doctorInfo = await db.User.findOne({
+                id: bookedAppoints.doctorId
+              })
+            }
+       
+          resolve({
+            errCode: 0,
+            data: {
+              date: bookedAppoints.date,
+              timeType: bookedAppoints.timeType,
+              doctorId: doctorInfo.id,
+              doctorName: `${doctorInfo.firstNam} ${doctorInfo.lastName}`,
+              doctorPhonenumber: doctorInfo.phoneNumber
+            },
+          });
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
 module.exports = {
   postBookAppointment: postBookAppointment,
   postVerifyBookAppointment: postVerifyBookAppointment,
-  filterHistory:filterHistory
+  filterHistory:filterHistory,
+  bookedAppointment: bookedAppointment
 };

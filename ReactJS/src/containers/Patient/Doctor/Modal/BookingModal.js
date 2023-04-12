@@ -175,9 +175,9 @@ class BookingModal extends Component {
     if (res && res.errCode === 0) {
       this.setState({ isShowLoading: false });
       if(language==="en"){
-        toast.success("Book a new appointment successfully, please check your email for confirmation!");
+        toast.success("Book a new appointment successfully.");
       }else{
-        toast.success("Đặt lịch khám thành công, hãy kiểm tra email của bạn để xác nhận!");
+        toast.success("Đặt lịch khám thành công");
       }
      
       this.props.closeBookingClose();

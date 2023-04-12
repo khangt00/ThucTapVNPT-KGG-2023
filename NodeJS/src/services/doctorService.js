@@ -479,9 +479,24 @@ let getScheduleByDate = (doctorId, date) => {
         if (!dataSchedule) {
           dataSchedule = [];
         }
+        const bookingResult = await db.Booking.findAll({
+          where: { doctorId: doctorId, date: date },
+          raw: false,
+          nest: true,
+        })
+
+        const result = []
+        for (const schedule of dataSchedule) {
+          const foundSchedule = bookingResult.find(
+            (booking) => booking.doctorId === schedule.doctorId && booking.timeType === schedule.timeType,
+          )
+          if (!foundSchedule || foundSchedule.statusId === 'S1') {
+            result.push(schedule)
+          }
+        }
         resolve({
           errCode: 0,
-          data: dataSchedule,
+          data: result,
         });
       }
     } catch (e) {
@@ -991,6 +1006,157 @@ let createRemedy = (data) => {
     }
   });
 };
+
+let getListPatientForDoctorInHistory = (doctorId, startDate, endDate) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!doctorId) {
+        resolve({
+          errCode: 1,
+          errMessage: 'Missing required parameter',
+        })
+      } else {
+        let startDateInput = startDate ?? null
+        let endDateInput = endDate ?? null
+
+        let dataHistories = []
+        if (startDate && endDate) {
+          dataHistories = await db.History.findAll({
+            where: {
+              doctorId,
+              createdAt: {
+                [Op.lt]: new Date(new Date(endDateInput).getTime() + 60 * 60 * 24 * 1000 - 1),
+                [Op.gt]: new Date(startDateInput),
+              },
+            },
+            order: [['createdAt', 'DESC']],
+            attributes: [
+              'id',
+              'patientId',
+              'doctorId',
+              'description',
+              'drugs',
+              'files',
+              'reason',
+              'createdAt',
+              'updatedAt',
+            ],
+            include: [
+              {
+                model: db.User,
+                as: 'patientDataHistory',
+                attributes: ['email', 'firstName', 'lastName', 'address', 'gender', 'phonenumber'],
+                include: [
+                  {
+                    model: db.Allcode,
+                    as: 'genderData',
+                    attributes: ['valueEn', 'valueVi'],
+                  },
+                ],
+              },
+            ],
+            raw: true,
+            nest: true,
+          })
+        } else {
+          dataHistories = await db.History.findAll({
+            where: {
+              doctorId,
+            },
+            order: [['createdAt', 'DESC']],
+            attributes: [
+              'id',
+              'patientId',
+              'doctorId',
+              'description',
+              'drugs',
+              'files',
+              'reason',
+              'createdAt',
+              'updatedAt',
+            ],
+            include: [
+              {
+                model: db.User,
+                as: 'patientDataHistory',
+                attributes: ['email', 'firstName', 'lastName', 'address', 'gender', 'phonenumber'],
+                include: [
+                  {
+                    model: db.Allcode,
+                    as: 'genderData',
+                    attributes: ['valueEn', 'valueVi'],
+                  },
+                ],
+              },
+            ],
+            raw: true,
+            nest: true,
+          })
+        }
+
+        resolve({
+          errCode: 0,
+          data: dataHistories,
+        })
+      }
+    } catch (e) {
+      reject(e)
+    }
+  })
+}
+
+let getDetailPatientForDoctorInHistory = (historyId, doctorId, patientId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!historyId || !doctorId || !patientId) {
+        resolve({
+          errCode: 1,
+          errMessage: 'Missing required parameter',
+        })
+      } else {
+        let data = await db.History.findOne({
+          where: {
+            id: historyId,
+            doctorId,
+            patientId,
+          },
+          include: [
+            {
+              model: db.User,
+              as: 'patientDataHistory',
+              attributes: ['email', 'firstName', 'address', 'gender', 'phonenumber'],
+              include: [
+                {
+                  model: db.Allcode,
+                  as: 'genderData',
+                  attributes: ['valueEn', 'valueVi'],
+                },
+              ],
+            },
+            // {
+            //   model: db.History_Extra,
+            //   attributes: ['description_usage', 'unit', 'amount'],
+            // },
+          ],
+          raw: false,
+          nest: true,
+        })
+
+        if (!data) {
+          data = {}
+        }
+
+        resolve({
+          errCode: 0,
+          data: data,
+        })
+      }
+    } catch (e) {
+      reject(e)
+    }
+  })
+}
+
 module.exports = {
   getTopDoctorHome: getTopDoctorHome,
   getAllDoctors: getAllDoctors,
@@ -1006,4 +1172,6 @@ module.exports = {
   createRemedy: createRemedy,
   getBookingById: getBookingById,
   filterDoctors: filterDoctors,
+  getListPatientForDoctorInHistory,
+  getDetailPatientForDoctorInHistory,
 };

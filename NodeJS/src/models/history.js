@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
           targetKey: "id",
           as: "doctorDataHistory",
         });
+      History.belongsTo(models.User, {
+          foreignKey: "patientId",
+          targetKey: "id",
+          as: "patientDataHistory",
+        });
     }
   }
   History.init(

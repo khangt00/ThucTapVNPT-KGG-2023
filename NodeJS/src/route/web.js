@@ -81,6 +81,10 @@ let initWebRoutes = (app) => {
     doctorController.filterDoctors
   );
 
+  // For history
+  router.get('/api/history/get-list-patient-for-doctor', doctorController.getListPatientForDoctorInHistory)
+  router.get('/api/history/detail/patient-for-doctor', doctorController.getDetailPatientForDoctorInHistory)
+
   router.post(
     "/api/patient-book-appointment",
     patientController.postBookAppointment
@@ -92,6 +96,10 @@ let initWebRoutes = (app) => {
   router.post(
     "/api/filter-history",
     patientController.filterHistory
+  );
+  router.get(
+    "/api/get-list-booked-appointment",
+    patientController.bookedAppointment
   );
 
   router.post("/api/create-new-specialty", specialtyController.createSpecialty);

@@ -231,7 +231,8 @@
     "doctor": "Bác sĩ khám bệnh",
     "prescription": "Đơn thuốc",
     "doctor-advice": "Lời dặn của bác sĩ",
-    "receipt": "Hóa đơn"
+    "receipt": "Hóa đơn",
+    "patient": "Bệnh nhân khám bệnh"
   },
   "admin-dashboard": {
     "dashboard":{

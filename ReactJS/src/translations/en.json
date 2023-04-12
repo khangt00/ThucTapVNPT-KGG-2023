@@ -231,7 +231,8 @@
     "doctor": "Doctor",
     "prescription": "Prescription",
     "doctor-advice": "Doctor's advice",
-    "receipt": "Receipt"
+    "receipt": "Receipt",
+    "patient": "Patient"
   },
   "admin-dashboard": {
       "dashboard":{

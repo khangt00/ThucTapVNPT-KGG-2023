@@ -37,6 +37,7 @@ import CreateRemedy from "../../containers/System/Doctor/CreateRemedy";
 import RestoreUser from "../../containers/System/Admin/RestoreUser/RestoreUser";
 
 import { useDispatch, useSelector } from "react-redux";
+import DoctorMedicalHistory from "../System/Doctor/Profile/MedicalHistory";
 
 // ----------------------------------------------------------------------
 
@@ -91,7 +92,8 @@ export default function Router() {
           path: "manage-schedule-doctor",
           element: <ManageScheduleOneDoctor />,
         }, //quan ly ke hoach kham benh chi rieng mot bac si do
-        { path: "", element: <Navigate to="/admin-dashboard/doctor/manage-patient" replace={true}/> }
+        { path: "", element: <Navigate to="/admin-dashboard/doctor/manage-patient" replace={true}/> },
+        { path: 'history', element: <DoctorMedicalHistory /> },
       ],
     },
     // {

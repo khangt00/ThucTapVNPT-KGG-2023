@@ -185,6 +185,12 @@ const deleteRestoreUser = (data) => {
   return axios.post(`/api/delete-restore-user`,data);
 };
 
+const filterDoctorHistories = (data) => {
+  return axios.get(
+    `/api/history/get-list-patient-for-doctor?doctorId=${data.doctorId}&startDate=${data.startDate}&endDate=${data.endDate}`,
+  )
+};
+
 export {
   getMonthlyRevenueSpecialty,
   getTopFourVipPatient,
@@ -228,5 +234,6 @@ export {
   editPassword,
   filterRestoreUsers,
   handleRestoreUser,
-  deleteRestoreUser
+  deleteRestoreUser,
+  filterDoctorHistories,
 };
