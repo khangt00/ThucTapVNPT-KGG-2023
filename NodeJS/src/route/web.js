@@ -93,6 +93,10 @@ let initWebRoutes = (app) => {
     "/api/filter-history",
     patientController.filterHistory
   );
+  router.get(
+    "/api/get-list-booked-appointment",
+    patientController.bookedAppointment
+  );
 
   router.post("/api/create-new-specialty", specialtyController.createSpecialty);
   router.post("/api/get-specialty", specialtyController.getAllSpecialty);
