@@ -490,7 +490,7 @@ let getScheduleByDate = (doctorId, date) => {
           const foundSchedule = bookingResult.find(
             (booking) => booking.doctorId === schedule.doctorId && booking.timeType === schedule.timeType,
           )
-          if (!foundSchedule || foundSchedule.statusId === 'S1') {
+          if (!foundSchedule || foundSchedule.statusId === 'S1' || foundSchedule.statusId === 'S4') {
             result.push(schedule)
           }
         }
@@ -636,7 +636,8 @@ let getListPatientForDoctor = (doctorId, date) => {
         });
       } else {
         let data = await db.Booking.findAll({
-          where: { statusId: "S2", doctorId: doctorId, date: date },
+          where: { doctorId: doctorId, date: date },
+          order: [['createdAt', 'DESC']],
           include: [
             {
               model: db.User,
@@ -739,7 +740,7 @@ let getBookingById = (bookingId) => {
 let cancelBooking = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      if (!data.date || !data.doctorId || !data.patientId || !data.timeType) {
+      if (!data.id || !data.date || !data.doctorId || !data.patientId || !data.timeType) {
         resolve({
           errCode: 1,
           errMessage: "Missing required parameter",
@@ -748,17 +749,48 @@ let cancelBooking = (data) => {
         //update booking status
         let appoinment = await db.Booking.findOne({
           where: {
-            doctorId: data.doctorId,
-            patientId: data.patientId,
-            timeType: data.timeType,
-            date: data.date,
-            statusId: "S2",
+            id: data.id
           },
           raw: false,
         });
 
         if (appoinment) {
           appoinment.statusId = "S4";
+          await appoinment.save();
+        }
+
+        resolve({
+          errCode: 0,
+          errMessage: "ok",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+let confirmBooking = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!data.id || !data.date || !data.doctorId || !data.patientId || !data.timeType) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameter",
+        });
+      } else {
+        //update booking status
+        let appoinment = await db.Booking.findOne({
+          where: {
+            id: data.id
+          },
+          raw: false,
+        });
+
+        console.log('appoinment: ', appoinment)
+
+        if (appoinment) {
+          appoinment.statusId = "S2";
           await appoinment.save();
         }
 
@@ -1174,4 +1206,5 @@ module.exports = {
   filterDoctors: filterDoctors,
   getListPatientForDoctorInHistory,
   getDetailPatientForDoctorInHistory,
+  confirmBooking,
 };

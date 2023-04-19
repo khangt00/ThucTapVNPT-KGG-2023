@@ -12,6 +12,7 @@ import LeftContent from "./resources/LeftContent"
 
 import MyAccount from "./resources/MyAccount";
 import MedicalHistory from "./resources/MedicalHistory";
+import BookedAppointment from "./resources/BookedAppointment";
 
 import { Redirect, Route, Switch } from "react-router-dom";
 
@@ -45,6 +46,7 @@ export default function ProfileSetting() {
               <Switch>
                   <Route path="/user/profile-setting" component={MyAccount} />
                   <Route path="/user/medical-history" component={MedicalHistory} />
+                  <Route path="/user/booked-appointment" component={BookedAppointment} />
                   <Route
                     component={() => {
                       return <Redirect to={"/user/profile-setting"} />;

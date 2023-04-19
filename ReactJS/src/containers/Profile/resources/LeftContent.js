@@ -78,6 +78,12 @@ export default function LeftContent() {
                         <FormattedMessage id="profile-setting.medical-history" />
                     </div>
                 </div>
+                <div class={`${currentRoute == "/user/booked-appointment" ? "active" : ""} pointer row align-items-center tabs p-16`}  onClick={()=>history.push("/user/booked-appointment")}>
+                    <div class="col-auto"><i class="fas fa-edit"></i></div>
+                    <div class="col-auto">
+                        <FormattedMessage id="medical-history.booking-history" />
+                    </div>
+                </div>
             </div>
       </div>
   );

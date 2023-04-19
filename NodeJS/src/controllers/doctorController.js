@@ -179,6 +179,19 @@ let cancelBooking = async (req, res) => {
   }
 };
 
+let confirmBooking = async (req, res) => {
+  try {
+    let infor = await doctorService.confirmBooking(req.body);
+    return res.status(200).json(infor);
+  } catch (e) {
+    console.log(e);
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Error from server",
+    });
+  }
+};
+
 let filterDoctors = async (req, res) => {
   try {
     let infor = await doctorService.filterDoctors(req.body);
@@ -243,4 +256,5 @@ module.exports = {
   filterDoctors:filterDoctors,
   getListPatientForDoctorInHistory,
   getDetailPatientForDoctorInHistory,
+  confirmBooking,
 };

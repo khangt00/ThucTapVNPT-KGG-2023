@@ -114,10 +114,6 @@ let postBookAppointment = (data) => {
         //     },
         //   });
         // }        // đặt lịch luôn
-        await postVerifyBookAppointment({
-          doctorId: data.doctorId,
-          token: token
-        })
 
         // await bookedAppointment();
         resolve({
@@ -267,35 +263,32 @@ let filterHistory = (data) => {
   });
 };
 
-const bookedAppointment = async () => {
+const bookedAppointment = async (patientId) => {
   return new Promise(async (resolve, reject) => {
     try {
         let bookedAppoints=[]
           bookedAppoints = await db.Booking.findAll({
               where: {
-                    patientId: 93,
-                    statusId: 'S2',
+                    patientId: patientId,
                 },
-            })
+                attributes: ["id", "patientId", "doctorId", "statusId", "date", "timeType"],
+                order: [['id', 'DESC']],
+                include: [
+                  {
+                    model: db.User,
+                    as: 'doctorDataBooking',
+                    attributes: ['email', 'firstName', 'lastName', 'address', 'phonenumber'],
+                  },
+                ],
+                raw: true,
+                nest: true,
+              })
 
             console.log('bookedAppoints: ', bookedAppoints)
-
-            let doctorInfo ={}
-            if(bookedAppoints.doctorId){
-              doctorInfo = await db.User.findOne({
-                id: bookedAppoints.doctorId
-              })
-            }
        
           resolve({
             errCode: 0,
-            data: {
-              date: bookedAppoints.date,
-              timeType: bookedAppoints.timeType,
-              doctorId: doctorInfo.id,
-              doctorName: `${doctorInfo.firstNam} ${doctorInfo.lastName}`,
-              doctorPhonenumber: doctorInfo.phoneNumber
-            },
+            data: bookedAppoints
           });
     } catch (e) {
       reject(e);

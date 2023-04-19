@@ -120,6 +120,10 @@ const cancelBooking = (data) => {
   return axios.post("/api/cancel-booking", data);
 };
 
+const confirmBooking = (data) => {
+  return axios.post("/api/confirm-booking", data);
+};
+
 const postUserForgotPassword = (data) => {
   return axios.post("/api/user-forgot-password", data);
 };
@@ -191,6 +195,12 @@ const filterDoctorHistories = (data) => {
   )
 };
 
+const getListBookedAppoinment = (patientId) => {
+  return axios.get(
+    `/api/get-list-booked-appointment?patientId=${patientId}`
+  )
+}
+
 export {
   getMonthlyRevenueSpecialty,
   getTopFourVipPatient,
@@ -236,4 +246,6 @@ export {
   handleRestoreUser,
   deleteRestoreUser,
   filterDoctorHistories,
+  getListBookedAppoinment,
+  confirmBooking,
 };
