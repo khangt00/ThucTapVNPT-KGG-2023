@@ -217,7 +217,9 @@
     "there-is-a-pre-created-prescription-file":"There is a pre-created prescription file",
     "choose-other-file":"Choose other file",
     "send":"Send",
-    "download":"Download"
+    "download":"Download",
+    "confirm": "Confirm",
+    "status": "Status"
   },
   "medical-history": {
     "title": "Medical examination history",
@@ -232,7 +234,9 @@
     "prescription": "Prescription",
     "doctor-advice": "Doctor's advice",
     "receipt": "Receipt",
-    "patient": "Patient"
+    "patient": "Patient",
+    "booking-history": "Booking history",
+    "status": "Status"
   },
   "admin-dashboard": {
       "dashboard":{

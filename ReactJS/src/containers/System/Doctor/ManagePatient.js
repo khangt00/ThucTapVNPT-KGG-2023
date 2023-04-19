@@ -5,6 +5,7 @@ import "./ManagePatient.scss";
 import DatePicker from "../../../components/Input/DatePicker";
 import {
   cancelBooking,
+  confirmBooking,
   getAllPatientForDoctor,
   postSendRemedy,
   postCreateRemedy,
@@ -99,6 +100,7 @@ class ManagePatient extends Component {
   handleBtnCancel = async (item) => {
     this.setState({ isShowLoading: true });
     let res = await cancelBooking({
+      id: item.id,
       doctorId: item.doctorId,
       patientId: item.patientId,
       timeType: item.timeType,
@@ -111,6 +113,33 @@ class ManagePatient extends Component {
         toast.success("cancel appointment succeed!");
       }else{
         toast.success("Hủy cuộc hẹn thành công!");
+      }
+      await this.getDataPatient();
+    } else {
+      this.setState({ isShowLoading: true });
+      if(this.props.language==="en"){
+        toast.error("Something wrongs...!");
+      }else{
+        toast.error("Lỗi!");
+      }
+    }
+  };
+  handleBtnConfirm = async (item) => {
+    this.setState({ isShowLoading: true });
+    let res = await confirmBooking({
+      id: item.id,
+      doctorId: item.doctorId,
+      patientId: item.patientId,
+      timeType: item.timeType,
+      date: item.date,
+      statusId: item.statusId,
+    });
+    if (res && res.errCode === 0) {
+      this.setState({ isShowLoading: false });
+      if(this.props.language==="en"){
+        toast.success("Confirm appointment succeed!");
+      }else{
+        toast.success("Xác nhận cuộc hẹn thành công!");
       }
       await this.getDataPatient();
     } else {
@@ -267,13 +296,24 @@ class ManagePatient extends Component {
     console.log("isOpen",this.state.isOpen)
   };
 
+  convertStatusToText = (statusId) => {
+    let result;
+    switch (statusId) {
+        case 'S1': result = this.props.language === 'en' ? 'Waiting for confirm' :  'Đang chờ xác nhận'; break;
+        case 'S2': result = this.props.language === 'en' ? 'Confirmed' : 'Đã xác nhận'; break;
+        case 'S3': result = this.props.language === 'en' ? 'Done' : 'Hoàn thành khám'; break;
+        case 'S4': result = this.props.language === 'en' ? 'Canceled' : 'Đã huỷ'; break;
+        default: result =  '';
+    }
+
+    return result;
+}
+
   render() {
     let {
       dataPatient,
       isOpenRemedyModal,
-      isOpenCreateImageRemedyModal,
       dataModal,
-      dataModalCreateRemedy,
     } = this.state;
     let { language } = this.props;
 
@@ -319,6 +359,7 @@ class ManagePatient extends Component {
                       <th><FormattedMessage id={"manage-patient.gender"} /></th>
                       <th><FormattedMessage id={"manage-patient.reason"} /></th>
                       <th><FormattedMessage id={"manage-patient.prescription"} /></th>
+                      <th><FormattedMessage id={"manage-patient.status"} /></th>
                       <th><FormattedMessage id={"manage-patient.actions"} /></th>
                     </tr>
                     {dataPatient && dataPatient.length > 0 ? (
@@ -351,32 +392,43 @@ class ManagePatient extends Component {
                                 onClick={() => this.openPreviewImage(item)}
                               ><FormattedMessage id={"manage-patient.view"} /></div>
                             </td>
+                            <td>{this.convertStatusToText(item.statusId)}</td>
                             <td>
-                              <button
-                                className="btn btn-primary"
+                              { item.statusId !== 'S4' &&
+                              <>  
+                                <button
+                                  className="btn btn-primary mx-5"
+                                  onClick={() => this.handleBtnConfirm(item)}
+                                >
+                                  <FormattedMessage id={"manage-patient.send-prescriptions"} />
+                                </button>
+                                <button
+                                  className="btn btn-info mx-5"
+                                  onClick={() => this.handleBtnCreateRemedy(item)}
+                                >
+                                  <FormattedMessage id={"manage-patient.create-prescriptions"} />
+                                </button>
+                              </>
+                              }
+                              {item.statusId === 'S1' && <button
+                                className="btn btn-success mx-5"
                                 onClick={() => this.handleBtnConfirm(item)}
                               >
-                                <FormattedMessage id={"manage-patient.send-prescriptions"} />
-                              </button>
-                              <button
-                                className="btn btn-info mx-5"
-                                onClick={() => this.handleBtnCreateRemedy(item)}
-                              >
-                                <FormattedMessage id={"manage-patient.create-prescriptions"} />
-                              </button>
-                              <button
-                                className="btn btn-danger"
+                                <FormattedMessage id={"manage-patient.confirm"} />
+                              </button>}
+                              {(item.statusId === 'S1' || item.statusId === 'S2')&&<button
+                                className="btn btn-danger mx-5"
                                 onClick={() => this.handleBtnCancel(item)}
                               >
                                 <FormattedMessage id={"manage-patient.cancel"} />
-                              </button>
+                              </button>}
                             </td>
                           </tr>
                         );
                       })
                     ) : (
                       <tr>
-                        <td colSpan="9" style={{ textAlign: "center" }}>
+                        <td colSpan="10" style={{ textAlign: "center" }}>
                           {language === LANGUAGES.VI ? "Không có bệnh nhân đặt lịch vào ngày này" : "No patients booked for this date"}
                         </td>
                       </tr>

@@ -217,7 +217,9 @@
     "there-is-a-pre-created-prescription-file":"Đã có file đơn thuốc tạo trước đó",
     "choose-other-file":"Chọn file khác",
     "send":"Gửi",
-    "download":"Tải xuống"
+    "download":"Tải xuống",
+    "confirm": "Xác nhận",
+    "status": "Trạng thái"
   },
   "medical-history": {
     "title": "Lịch sử khám bệnh",
@@ -232,7 +234,9 @@
     "prescription": "Đơn thuốc",
     "doctor-advice": "Lời dặn của bác sĩ",
     "receipt": "Hóa đơn",
-    "patient": "Bệnh nhân khám bệnh"
+    "patient": "Bệnh nhân khám bệnh",
+    "booking-history": "Lịch sử hẹn khám",
+    "status": "Trạng thái"
   },
   "admin-dashboard": {
     "dashboard":{
