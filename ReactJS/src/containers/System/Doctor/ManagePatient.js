@@ -124,7 +124,7 @@ class ManagePatient extends Component {
       }
     }
   };
-  handleBtnConfirm = async (item) => {
+  handleBtnConfirmBooking = async (item) => {
     this.setState({ isShowLoading: true });
     let res = await confirmBooking({
       id: item.id,
@@ -412,7 +412,7 @@ class ManagePatient extends Component {
                               }
                               {item.statusId === 'S1' && <button
                                 className="btn btn-success mx-5"
-                                onClick={() => this.handleBtnConfirm(item)}
+                                onClick={() => this.handleBtnConfirmBooking(item)}
                               >
                                 <FormattedMessage id={"manage-patient.confirm"} />
                               </button>}
